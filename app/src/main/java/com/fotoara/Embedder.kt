@@ -34,22 +34,22 @@ class ColorEmbedder : Embedder {
     }
 
     override fun embedImage(bitmap: Bitmap): FloatArray {
-        val out = FloatArray(names.size)
+        val vec = FloatArray(names.size)
         val hsv = FloatArray(3)
         var n = 0
         for (y in 0 until bitmap.height) for (x in 0 until bitmap.width) {
             Color.colorToHSV(bitmap.getPixel(x, y), hsv)
-            out[bucket(hsv[0], hsv[1], hsv[2])] += 1f
+            vec[bucket(hsv[0], hsv[1], hsv[2])] += 1f
             n++
         }
-        if (n > 0) for (i in out.indices) out[i] /= n
-        return out
+        if (n > 0) for (i in vec.indices) vec[i] = vec[i] / n.toFloat()
+        return vec
     }
 
     override fun embedText(text: String): FloatArray {
         val t = normalize(text)
-        val out = FloatArray(names.size)
-        names.forEachIndexed { i, name -> if (t.contains(name)) out[i] = 1f }
-        return out
+        val vec = FloatArray(names.size)
+        names.forEachIndexed { i, name -> if (t.contains(name)) vec[i] = 1f }
+        return vec
     }
 }

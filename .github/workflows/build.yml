@@ -1,3 +1,4 @@
+cat > .github/workflows/build.yml <<'EOF'
 name: Build APK
 on:
   push:
@@ -15,14 +16,13 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.7
-      - name: Keystore olustur
-        run: echo "${{ secrets.KEYSTORE_B64 }}" | base64 -d > $GITHUB_WORKSPACE/perde.jks
-      - name: Release APK derle
-        run: gradle assembleRelease --no-daemon
-        env:
-          KEYSTORE_PATH: ${{ github.workspace }}/perde.jks
-          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+      - name: Debug APK derle
+        run: gradle assembleDebug --no-daemon
       - uses: actions/upload-artifact@v4
         with:
           name: FotoAra-APK
-          path: app/build/outputs/apk/release/app-release.apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+EOF
+git add -A
+git commit -m "imzasiz debug derleme"
+git push
